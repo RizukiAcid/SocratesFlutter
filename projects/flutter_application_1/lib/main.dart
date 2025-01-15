@@ -5,7 +5,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,9 +14,15 @@ class MyApp extends StatelessWidget {
           title: Text('Hello World App'),
         ),
         body: Center(
-          child: Text('Hello World'),
+          child: Container(
+              color: Colors.lightBlue,
+              width: 150,
+              height: 50,
+              child: Text('Hello World')),
         ),
       ),
     );
   }
 }
+
+// flutter run -d web-server --web-port=8080 --web-hostname=0.0.0.0Text
