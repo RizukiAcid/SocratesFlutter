@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -36,8 +38,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    // Your fetch data logic here
-    return [];
+    final response = await http.get(Uri.parse('https://api.example.com/data'));
+
+    if (response.statusCode == 200) {
+      return List<dynamic>.from(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
 
   @override
