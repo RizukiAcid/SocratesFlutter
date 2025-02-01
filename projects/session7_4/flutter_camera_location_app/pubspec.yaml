@@ -1,0 +1,20 @@
+name: flutter_camera_location_app
+description: A Flutter app to demonstrate access to camera and location based on device type.
+publish_to: 'none' 
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  permission_handler: ^10.2.0
+  camera: ^0.10.0
+  geolocator: ^8.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
