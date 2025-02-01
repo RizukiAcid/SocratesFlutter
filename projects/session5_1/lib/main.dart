@@ -38,7 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<List<dynamic>> fetchData() async {
-    final response = await http.get(Uri.parse('https://api.example.com/data'));
+    // Make sure to replace 'https://api.example.com/data' with the actual URL of your backend or external API.
+    final response = await http.get(Uri.parse('https://api.example.com/data')); 
 
     if (response.statusCode == 200) {
       return List<dynamic>.from(json.decode(response.body));
