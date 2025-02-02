@@ -12,15 +12,32 @@ class CounterDisplay extends StatelessWidget {
 }
 
 class CounterIncrementor extends StatelessWidget {
-  const CounterIncrementor({required this.onPressed, super.key});
+  const CounterIncrementor({required this.onIncrement, required this.onDecrement, required this.onReset, super.key});
 
-  final VoidCallback onPressed;
+  final VoidCallback onIncrement;
+  final VoidCallback onDecrement;
+  final VoidCallback onReset;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      child: const Text('Increment'),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        ElevatedButton(
+          onPressed: onIncrement,
+          child: const Text('Increment'),
+        ),
+        const SizedBox(width: 8),
+        ElevatedButton(
+          onPressed: onDecrement,
+          child: const Text('Decrement'),
+        ),
+        const SizedBox(width: 8),
+        ElevatedButton(
+          onPressed: onReset,
+          child: const Text('Reset'),
+        ),
+      ],
     );
   }
 }
@@ -41,14 +58,30 @@ class _CounterState extends State<Counter> {
     });
   }
 
+  void _decrement() {
+    setState(() {
+      --_counter;
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      _counter = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        CounterIncrementor(onPressed: _increment),
-        const SizedBox(width: 16),
         CounterDisplay(count: _counter),
+        const SizedBox(height: 16),
+        CounterIncrementor(
+          onIncrement: _increment,
+          onDecrement: _decrement,
+          onReset: _reset,
+        ),
       ],
     );
   }
