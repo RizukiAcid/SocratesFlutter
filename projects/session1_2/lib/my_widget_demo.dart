@@ -36,7 +36,11 @@ class _MyWidgetDemoState extends State<MyWidgetDemo> {
             ),
           ),
           // Image Widget
-          Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2-TVphB148wg1omRxgqXTMk9lDbLyunCmdw&s'),
+          Image.asset(
+            'assets\\flutter_logo.png',
+            width: 200,
+            height: 200,
+          ),
           // Button Widget
           ElevatedButton(
             onPressed: _incrementCounter,
