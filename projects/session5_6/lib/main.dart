@@ -8,6 +8,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,6 +20,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ItemListPage extends StatefulWidget {
+  const ItemListPage({super.key});
+
   @override
   _ItemListPageState createState() => _ItemListPageState();
 }
@@ -109,7 +113,7 @@ class _ItemListPageState extends State<ItemListPage> {
 
 class ItemFormPage extends StatefulWidget {
   final Item? item;
-  ItemFormPage({this.item});
+  const ItemFormPage({super.key, this.item});
 
   @override
   _ItemFormPageState createState() => _ItemFormPageState();
