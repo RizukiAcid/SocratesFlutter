@@ -1,10 +1,10 @@
 // lib/item.dart
 class Item {
-  final int id;
+  final int? id; // Make id nullable
   final String title;
   final String description;
 
-  Item({required this.id, required this.title, required this.description});
+  Item({this.id, required this.title, required this.description});
 
   // Create an Item from a JSON map
   factory Item.fromJson(Map<String, dynamic> json) {
@@ -17,10 +17,13 @@ class Item {
 
   // Convert an Item to a JSON map
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
+    final Map<String, dynamic> data = {
       'title': title,
       'description': description,
     };
+    if (id != null) {
+      data['id'] = id;
+    }
+    return data;
   }
 }

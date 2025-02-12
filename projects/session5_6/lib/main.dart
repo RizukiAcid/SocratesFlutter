@@ -1,7 +1,7 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'item.dart';
+import 'item_form_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -9,7 +9,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,7 +20,6 @@ class MyApp extends StatelessWidget {
 
 class ItemListPage extends StatefulWidget {
   const ItemListPage({super.key});
-
   @override
   _ItemListPageState createState() => _ItemListPageState();
 }
@@ -81,13 +79,16 @@ class _ItemListPageState extends State<ItemListPage> {
                       IconButton(
                         icon: Icon(Icons.edit),
                         onPressed: () {
-                          showItemForm(item: item);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ItemFormPage(item: item)),
+                          ).then((value) => refreshItems());
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () {
-                          deleteItem(item.id);
+                          deleteItem(item.id!);
                         },
                       ),
                     ],
@@ -103,96 +104,12 @@ class _ItemListPageState extends State<ItemListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showItemForm();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ItemFormPage()),
+          ).then((value) => refreshItems());
         },
         child: Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class ItemFormPage extends StatefulWidget {
-  final Item? item;
-  const ItemFormPage({super.key, this.item});
-
-  @override
-  _ItemFormPageState createState() => _ItemFormPageState();
-}
-
-class _ItemFormPageState extends State<ItemFormPage> {
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController titleController;
-  late TextEditingController descriptionController;
-  ApiService apiService = ApiService();
-
-  @override
-  void initState() {
-    super.initState();
-    titleController = TextEditingController(text: widget.item?.title ?? '');
-    descriptionController = TextEditingController(text: widget.item?.description ?? '');
-  }
-
-  void submit() async {
-    if (_formKey.currentState!.validate()) {
-      String title = titleController.text;
-      String description = descriptionController.text;
-      // When creating, id can be set to 0 or omitted if your API assigns it automatically
-      Item newItem = Item(id: widget.item?.id ?? 0, title: title, description: description);
-      try {
-        if (widget.item == null) {
-          await apiService.createItem(newItem);
-        } else {
-          await apiService.updateItem(widget.item!.id, newItem);
-        }
-        Navigator.pop(context);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.item == null ? 'Create Item' : 'Update Item'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: titleController,
-                decoration: InputDecoration(labelText: 'Title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: submit,
-                child: Text(widget.item == null ? 'Create' : 'Update'),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
