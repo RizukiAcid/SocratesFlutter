@@ -114,7 +114,17 @@ class SecondPage extends StatelessWidget {
         title: Text('Second Page'),
       ),
       body: Center(
-        child: Text('This is the second page'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('This is the second page'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => context.go('/'),
+              child: Text('Go Back'),
+            ),
+          ],
+        ),
       ),
     );
   }
