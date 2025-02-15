@@ -1,125 +1,120 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'dart:isolate';
+import 'package:record/record.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: VoiceRecorder(),
+      title: 'Audio Recorder & Player',
+      home: AudioRecorderPage(),
     );
   }
 }
 
-class VoiceRecorder extends StatefulWidget {
+class AudioRecorderPage extends StatefulWidget {
+  const AudioRecorderPage({super.key});
+
   @override
-    _VoiceRecorderState createState() => _VoiceRecorderState();
+  _AudioRecorderPageState createState() => _AudioRecorderPageState();
+}
+
+class _AudioRecorderPageState extends State<AudioRecorderPage> {
+  final Record _record = Record();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  String? _recordedFilePath;
+  bool _isRecording = false;
+
+  // Function to get temporary file path
+  Future<String> getFilePath() async {
+    Directory tempDir = await getTemporaryDirectory();
+    String path = '${tempDir.path}/recording.m4a';
+    return path;
   }
 
-  class _VoiceRecorderState extends State<VoiceRecorder> {
-    FlutterSoundRecorder? _recorder;
-    FlutterSoundPlayer? _player;
-    bool _isRecording = false;
-    String? _filePath;
-
-    @override
-  void initState() {
-    super.initState();
-    _recorder = FlutterSoundRecorder();
-    _player = FlutterSoundPlayer();
-    _initializeRecorder();
-  }
-
-  Future<void> _initializeRecorder() async {
-    if (kIsWeb) {
-      await _requestWebPermissions();
-    }
-    await _recorder!.openRecorder();
-    await _player!.openPlayer();
-  }
-
-  Future<void> _requestWebPermissions() async {
-    if (kIsWeb) {
-      try {
-        final status = await Permission.microphone.status;
-        if (!status.isGranted) {
-          final result = await Permission.microphone.request();
-          if (!result.isGranted) {
-            print('Microphone permission denied');
-            return;
-          }
-        }
-      } catch (e) {
-        print('Error requesting microphone permission: $e');
-      }
-    }
-  }
-
+  // Start recording
   Future<void> _startRecording() async {
-    try {
-      if (kIsWeb) {
-        final blob = await _recorder!.startRecorder();
-        if (blob != null) {
-          print('Recording started successfully.');
-        }
-      } else {
-        if (await Permission.microphone.request().isGranted) {
-          _filePath = 'recording.aac';
-          await _recorder!.startRecorder(
-            toFile: _filePath,
-            codec: Codec.aacADTS,
-          );
-        }
-      }
-      setState(() => _isRecording = true);
-    } catch (e) {
-      print('Error starting recorder: $e');
+    if (await _record.hasPermission()) {
+      String path = await getFilePath();
+      await _record.start(
+        path: path, // optional, if not provided, a temporary file will be used
+        encoder: AudioEncoder.AAC, // You can use other encoders as needed
+        bitRate: 128000,
+        samplingRate: 44100,
+      );
+      setState(() {
+        _isRecording = true;
+        _recordedFilePath = path;
+      });
+    } else {
+      // Handle permission denial gracefully
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Microphone permission not granted')),
+      );
     }
   }
 
+  // Stop recording
   Future<void> _stopRecording() async {
-    await _recorder!.stopRecorder();
-    setState(() => _isRecording = false);
+    String? path = await _record.stop();
+    setState(() {
+      _isRecording = false;
+      _recordedFilePath = path;
+    });
   }
 
+  // Play the recorded audio
   Future<void> _playRecording() async {
-    if (_filePath != null) {
-      await _player!.startPlayer(
-        fromURI: _filePath,
-        codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
+    if (_recordedFilePath != null && File(_recordedFilePath!).existsSync()) {
+      await _audioPlayer.play(DeviceFileSource(_recordedFilePath!));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No recording found')),
       );
     }
   }
 
   @override
   void dispose() {
-    _recorder?.closeRecorder();
-    _player?.closePlayer();
+    _audioPlayer.dispose();
+    _record.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Voice Recorder')),
+      appBar: AppBar(
+        title: const Text('Audio Recorder & Player'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             ElevatedButton(
               onPressed: _isRecording ? _stopRecording : _startRecording,
               child: Text(_isRecording ? 'Stop Recording' : 'Start Recording'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _playRecording,
-              child: Text('Play Recording'),
+              child: const Text('Play Recording'),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              _recordedFilePath == null
+                  ? 'No recording yet'
+                  : 'Recorded File Path:\n$_recordedFilePath',
+              textAlign: TextAlign.center,
             ),
           ],
         ),
