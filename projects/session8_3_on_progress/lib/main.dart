@@ -1,6 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
-import 'db_helper.dart';
+import 'database_helper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,9 +27,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  List<Map<String, dynamic>> _items = [];
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
-  List<Map<String, dynamic>> _items = [];
 
   @override
   void initState() {
@@ -37,42 +38,56 @@ class _HomePageState extends State<HomePage> {
     _refreshItems();
   }
 
-  // Retrieve items from database
+  // Refresh the list of items from the database
   void _refreshItems() async {
-    final data = await DBHelper.instance.queryAllItems();
+    final data = await _dbHelper.queryAllItems();
     setState(() {
       _items = data;
     });
   }
 
-  // Insert new item into database
+  // Insert a new item into the database
   Future<void> _addItem() async {
-    final name = _nameController.text;
-    final description = _descController.text;
-    if (name.isNotEmpty && description.isNotEmpty) {
-      await DBHelper.instance.insertItem({
-        'name': name,
-        'description': description,
-      });
-      _nameController.clear();
-      _descController.clear();
-      _refreshItems();
-    }
-  }
-
-  // Delete an item from database
-  Future<void> _deleteItem(int id) async {
-    await DBHelper.instance.deleteItem(id);
+    await _dbHelper.insertItem({
+      'name': _nameController.text,
+      'description': _descController.text,
+    });
+    _nameController.clear();
+    _descController.clear();
     _refreshItems();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('SQFLite Demo')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+  // Update an existing item
+  Future<void> _updateItem(int id) async {
+    await _dbHelper.updateItem({
+      'id': id,
+      'name': _nameController.text,
+      'description': _descController.text,
+    });
+    _nameController.clear();
+    _descController.clear();
+    _refreshItems();
+  }
+
+  // Delete an item
+  Future<void> _deleteItem(int id) async {
+    await _dbHelper.deleteItem(id);
+    _refreshItems();
+  }
+
+  // Show a dialog for adding/updating an item
+  void _showForm([Map<String, dynamic>? item]) {
+    if (item != null) {
+      _nameController.text = item['name'];
+      _descController.text = item['description'] ?? '';
+    }
+    showModalBottomSheet(
+      context: context,
+      elevation: 5,
+      builder: (_) => Container(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: _nameController,
@@ -84,30 +99,57 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _addItem,
-              child: const Text('Add Item'),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _items.length,
-                itemBuilder: (context, index) {
-                  final item = _items[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text(item['name']),
-                      subtitle: Text(item['description']),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => _deleteItem(item['id']),
-                      ),
-                    ),
-                  );
-                },
-              ),
+              child: Text(item == null ? 'Add Item' : 'Update Item'),
+              onPressed: () {
+                if (item == null) {
+                  _addItem();
+                } else {
+                  _updateItem(item['id']);
+                }
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('SQFLite Demo'),
+      ),
+      body: ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (_, index) {
+          final item = _items[index];
+          return Card(
+            margin: const EdgeInsets.all(8),
+            child: ListTile(
+              title: Text(item['name']),
+              subtitle: Text(item['description'] ?? ''),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => _showForm(item),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => _deleteItem(item['id']),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => _showForm(),
       ),
     );
   }
