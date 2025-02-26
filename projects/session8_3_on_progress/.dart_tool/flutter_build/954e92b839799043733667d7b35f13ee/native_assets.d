@@ -1,0 +1,1 @@
+ D:\\GitHub\\SocratesFlutter\\projects\\session8_3_on_progress\\.dart_tool\\flutter_build\\954e92b839799043733667d7b35f13ee\\native_assets.yaml: 
