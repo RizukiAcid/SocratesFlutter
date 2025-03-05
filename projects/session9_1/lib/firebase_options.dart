@@ -83,4 +83,5 @@ class DefaultFirebaseOptions {
     authDomain: 'sokratesflutter-1.firebaseapp.com',
     storageBucket: 'sokratesflutter-1.firebasestorage.app',
   );
+
 }
