@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "684848913773",
+    "firebase_url": "https://sokratesflutter-3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "sokratesflutter-3",
+    "storage_bucket": "sokratesflutter-3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684848913773:android:e31437beeda9a327c38e64",
+        "android_client_info": {
+          "package_name": "com.example.session9_3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcoQSAxlpsp-OXYDha6P09x25qsdz5vg0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
