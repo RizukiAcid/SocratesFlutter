@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "974652821981",
-    "project_id": "sokratesflutter-2",
-    "storage_bucket": "sokratesflutter-2.firebasestorage.app"
+    "project_number": "195404805161",
+    "project_id": "sokratesflutter-2-2d791",
+    "storage_bucket": "sokratesflutter-2-2d791.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:974652821981:android:b69089bd7a4b3c4003a634",
+        "mobilesdk_app_id": "1:195404805161:android:39a4cf0b680e1e79d11838",
         "android_client_info": {
           "package_name": "com.example.session9_2"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAMbz4GCr5-VRzbZCROHVFEJ7Y9ntYbuEE"
+          "current_key": "AIzaSyDSOeNMWtJBuEywZuqNeIPkVSMRFz-Z_Pk"
         }
       ],
       "services": {
