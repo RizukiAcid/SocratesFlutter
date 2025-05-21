@@ -1,35 +1,39 @@
 import 'package:flutter/material.dart';
 
-class CartScreen extends StatelessWidget {
-  const CartScreen({super.key});
+class AccountScreen extends StatelessWidget {
+  const AccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shopping Cart'),
+        title: const Text('My Account'),
         backgroundColor: const Color(0xFF3FAB3A),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.shopping_cart_outlined,
-              size: 100,
-              color: Colors.grey[400],
+            const CircleAvatar(
+              radius: 60,
+              backgroundColor: Color(0xFF3FAB3A),
+              child: Icon(
+                Icons.person,
+                size: 80,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 20),
             const Text(
-              'Your cart is empty',
+              'Welcome to Tokopedia',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 10),
             const Text(
-              'Add items to get started',
+              'Please log in to access your account',
               style: TextStyle(
                 color: Colors.grey,
               ),
@@ -41,10 +45,10 @@ class CartScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               ),
               onPressed: () {
-                Navigator.pop(context); // Go back to home
+                // Login functionality would go here
               },
               child: const Text(
-                'Continue Shopping',
+                'Login',
                 style: TextStyle(
                   color: Colors.white,
                 ),

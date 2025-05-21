@@ -3,6 +3,8 @@ import 'package:session10_1/widgets/header.dart';
 import 'package:session10_1/widgets/category_item.dart';
 import 'package:session10_1/widgets/product_card.dart';
 import 'package:session10_1/models/product.dart';
+import 'cart_screen.dart';
+import 'account_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -66,6 +68,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // List of screens for bottom navigation
+    final List<Widget> screens = [
+      _buildHomeContent(),
+      const CartScreen(),
+      const AccountScreen(),
+    ];
+    
+    return Scaffold(
+      // Show the selected screen based on current index
+      body: screens[_currentIndex],
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
+  
+  // Extract home screen content into a separate method
+  Widget _buildHomeContent() {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -94,7 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
